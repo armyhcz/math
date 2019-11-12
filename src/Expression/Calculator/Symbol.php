@@ -6,20 +6,23 @@
  * @author    Monkey  <Monkey@dm-miniprogram.com>
  * @copyright Copyright (C) 2019 Monkey
  */
-namespace Math\Expression\Calculator;
+namespace China\Math\Expression\Calculator;
 
 
-use Math\Calculation\Adapter\AddOperation;
-use Math\Calculation\Adapter\DivOperation;
-use Math\Calculation\Adapter\MulOperation;
-use Math\Calculation\Adapter\SubOperation;
+use China\Math\Calculation\Adapter\AddOperation;
+use China\Math\Calculation\Adapter\DivOperation;
+use China\Math\Calculation\Adapter\ModOperation;
+use China\Math\Calculation\Adapter\MulOperation;
+use China\Math\Calculation\Adapter\SquareOperation;
+use China\Math\Calculation\Adapter\SubOperation;
 
 
 /**
  * Class Symbol
- * @package Math\Expression\Calculator
+ * @package China\Math\Expression\Calculator
  */
-class Symbol {
+class Symbol
+{
 
     /**
      * @var array
@@ -41,7 +44,8 @@ class Symbol {
      * @param string $operation
      * @return Symbol
      */
-    public function setOperation(string $symbol, string $operation): self {
+    public function setOperation(string $symbol, string $operation): self
+    {
         $this->add_operation = array(
             $symbol => $operation
         );
@@ -53,7 +57,8 @@ class Symbol {
      * @param int $scale
      * @return mixed
      */
-    public function getOperation(?string $symbol = null, int $scale = 2) {
+    public function getOperation(?string $symbol = null, int $scale = 2)
+    {
         $operation = array_merge(self::MATH_OPERATION, $this->add_operation);
         if ($symbol) {
             if (isset($operation[$symbol])) {
@@ -68,7 +73,8 @@ class Symbol {
      * @param int $weight
      * @return Symbol
      */
-    public function setWeight(string $symbol, int $weight): self {
+    public function setWeight(string $symbol, int $weight): self
+    {
         $this->weight = array_merge($this->weight, array(
             $symbol => $weight
         ));
@@ -78,7 +84,8 @@ class Symbol {
     /**
      * @return array
      */
-    public function getWeight(): array {
+    public function getWeight(): array
+    {
         return array_merge(self::MATH_SYMBOL_WEIGHT, $this->weight);
     }
 
@@ -86,7 +93,8 @@ class Symbol {
      * @param string $symbol
      * @return Symbol
      */
-    public function setSymbol(string $symbol): self {
+    public function setSymbol(string $symbol): self
+    {
         $this->symbol = array_merge($this->symbol, array(
             $symbol
         ));
@@ -96,7 +104,8 @@ class Symbol {
     /**
      * @return array
      */
-    public function getSymbol(): array {
+    public function getSymbol(): array
+    {
         return array_merge(self::MATH_SYMBOL, $this->symbol);
     }
 
@@ -104,7 +113,7 @@ class Symbol {
      * @var array 运算符
      */
     private const MATH_SYMBOL = array(
-        '+', '-', '*', '/', '(', ')',
+        '+', '-', '*', '/', '(', ')', '%', '^'
     );
 
     /**
@@ -115,6 +124,8 @@ class Symbol {
         '-' => 10,
         '*' => 20,
         '/' => 20,
+        '%' => 20,
+        '^' => 500,
         '(' => 100,
         ')' => 100,
     );
@@ -127,6 +138,8 @@ class Symbol {
         '-' => SubOperation::class,
         '*' => MulOperation::class,
         '/' => DivOperation::class,
+        '%' => ModOperation::class,
+        '^' => SquareOperation::class,
     );
 
 }

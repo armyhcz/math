@@ -7,3 +7,9 @@
 # composer vendor
 vendor
 composer.lock
+
+# phpunit
+.phpunit.result.cache
+
+# test file
+test.php

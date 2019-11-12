@@ -10,13 +10,15 @@ namespace China\Math\Calculation\Adapter;
 
 
 use China\Math\Calculation\AbstractOperation;
+use China\Math\Number\Formatter;
 
 
 /**
- * Class AddOperation
+ * ^ 次方
+ * Class SquareOperation
  * @package China\Math\Calculation\Adapter
  */
-class AddOperation extends AbstractOperation
+class SquareOperation extends AbstractOperation
 {
 
     /**
@@ -26,7 +28,7 @@ class AddOperation extends AbstractOperation
      */
     public function __invoke(string $left, string $right): string
     {
-        return bcadd($left, $right, $this->scale);
+        return Formatter::format(pow($left, intval($right)), $this->scale);
     }
 
 }

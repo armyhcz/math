@@ -6,19 +6,22 @@
  * @author    Monkey  <Monkey@dm-miniprogram.com>
  * @copyright Copyright (C) 2019 Monkey
  */
-namespace Math\Expression;
+namespace China\Math\Expression;
 
 
-use Math\Expression\Calculator\Pattern;
-use Math\Expression\Calculator\Symbol;
+use China\Math\Calculation\OperationException;
+use China\Math\Expression\Calculator\Pattern;
+use China\Math\Expression\Calculator\Symbol;
+use RuntimeException;
 use SplStack;
 
 
 /**
- * Class Factory
- * @package Math\Expression
+ * Class Calculator
+ * @package China\Math\Expression
  */
-class Calculator {
+class Calculator
+{
 
     /**
      * @var SplStack
@@ -34,7 +37,8 @@ class Calculator {
      * Calculator constructor.
      * @param Symbol|null $symbol
      */
-    public function __construct(?Symbol $symbol = null) {
+    public function __construct(?Symbol $symbol = null)
+    {
         if (!$symbol) {
             $symbol = new Symbol();
         }
@@ -44,11 +48,13 @@ class Calculator {
     /**
      * @param string $expression
      * @return Calculator
+     * @throws OperationException
      */
-    public function pattern(string $expression): self {
+    public function pattern(string $expression): self
+    {
         $this->result_stack = self::change($expression, new SplStack(), new SplStack());
         if (!$this->result_stack) {
-            var_dump(1);die();
+            throw new OperationException("未解析参数");
         }
         return $this;
     }
@@ -58,7 +64,8 @@ class Calculator {
      * @param int $scale
      * @return string
      */
-    public function calc(array $data, int $scale = 2): string {
+    public function calc(array $data, int $scale = 2): string
+    {
         return (new Pattern($this->result_stack))->calc($data, $scale, $this->symbol);
     }
 
@@ -67,11 +74,12 @@ class Calculator {
      * @param SplStack $symbol_stack
      * @param SplStack $result_stack
      * @return SplStack
+     * @throws OperationException
      */
     private function change(string $expression, SplStack $symbol_stack,
-                                   SplStack $result_stack): SplStack {
+                            SplStack $result_stack): SplStack
+    {
         if (strlen($expression) === 0) {
-            $a= $symbol_stack->top();
             $length = $symbol_stack->count();
             for ($i = 0; $i < $length; $i++) {
                 $result_stack->push($symbol_stack->pop());
@@ -107,7 +115,8 @@ class Calculator {
      * @param SplStack $result_stack
      * @return array
      */
-    private static function next(SplStack $symbol_stack, SplStack $result_stack): array {
+    private static function next(SplStack $symbol_stack, SplStack $result_stack): array
+    {
         //如果是右括号“)”，则依次弹出S1栈顶的运算符，并压入S2，直到遇到左括号为止，此时将这一对括号丢弃；
         if ($symbol_stack->top() === '(') {
             $symbol_stack->pop();
@@ -124,16 +133,17 @@ class Calculator {
      * @param SplStack $symbol_stack
      * @param SplStack $result_stack
      * @return array
+     * @throws OperationException
      */
-    private function compare(string $param, SplStack $symbol_stack, SplStack $result_stack): array {
+    private function compare(string $param, SplStack $symbol_stack, SplStack $result_stack): array
+    {
         if ($this->symbol->getWeight()[$param] < $this->symbol->getWeight()[$symbol_stack->top()] &&
-                $symbol_stack->top() !== '(') {
+            $symbol_stack->top() !== '(') {
             try {
 
                 $result_stack->push($symbol_stack->pop());
-            } catch (\RuntimeException $e) {
-                var_dump($symbol_stack);
-                var_dump($param);die();
+            } catch (RuntimeException $e) {
+                throw new OperationException("未知错误: {$e->getMessage()}");
             }
             if ($symbol_stack->count() > 0) {
                 return self::compare($param, $symbol_stack, $result_stack);

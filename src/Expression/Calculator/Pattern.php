@@ -6,7 +6,7 @@
  * @author    Monkey  <Monkey@dm-miniprogram.com>
  * @copyright Copyright (C) 2019 Monkey
  */
-namespace Math\Expression\Calculator;
+namespace China\Math\Expression\Calculator;
 
 
 use SplStack;
@@ -14,9 +14,10 @@ use SplStack;
 
 /**
  * Class Pattern
- * @package Math\Expression\Pattern
+ * @package China\Math\Expression\Calculator
  */
-class Pattern {
+class Pattern
+{
 
     /**
      * @var SplStack
@@ -27,7 +28,8 @@ class Pattern {
      * Pattern constructor.
      * @param SplStack $stack
      */
-    public function __construct(SplStack $stack) {
+    public function __construct(SplStack $stack)
+    {
         $this->stack = $stack;
     }
 
@@ -37,14 +39,15 @@ class Pattern {
      * @param Symbol|null $symbol
      * @return string
      */
-    public function calc(array $data, int $scale, ?Symbol $symbol = null): string {
+    public function calc(array $data, int $scale, ?Symbol $symbol = null): string
+    {
         $value_stack = new SplStack();
         if (!$symbol) {
             $symbol = new Symbol();
         }
         $math_symbol = $symbol->getSymbol();
         $length = $this->stack->count();
-        for($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; $i++) {
             $value = $this->stack->shift();
             if (in_array($value, $math_symbol)) {
                 $class = $symbol->getOperation($value, $scale);

@@ -13,10 +13,11 @@ use China\Math\Calculation\AbstractOperation;
 
 
 /**
- * Class AddOperation
+ * % 余数
+ * Class ModOperation
  * @package China\Math\Calculation\Adapter
  */
-class AddOperation extends AbstractOperation
+class ModOperation extends AbstractOperation
 {
 
     /**
@@ -26,7 +27,7 @@ class AddOperation extends AbstractOperation
      */
     public function __invoke(string $left, string $right): string
     {
-        return bcadd($left, $right, $this->scale);
+        return bcmod($left, $right, $this->scale);
     }
 
 }

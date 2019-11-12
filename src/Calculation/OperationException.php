@@ -9,8 +9,11 @@
 namespace China\Math\Calculation;
 
 
+use Exception;
+
+
 /**
- * Interface OperationInterface
+ * Class OperationException
  * @package China\Math\Calculation
  */
-interface OperationInterface {}
+class OperationException extends Exception {}

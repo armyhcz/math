@@ -6,14 +6,15 @@
  * @author    Monkey  <Monkey@dm-miniprogram.com>
  * @copyright Copyright (C) 2019 Monkey
  */
-namespace Math\Calculation;
+namespace China\Math\Calculation;
 
 
 /**
  * Class AbstractOperation
- * @package Math\Calculation
+ * @package China\Math\Calculation
  */
-abstract class AbstractOperation implements OperationInterface {
+abstract class AbstractOperation implements OperationInterface
+{
 
     /**
      * @var int
@@ -24,7 +25,8 @@ abstract class AbstractOperation implements OperationInterface {
      * AbstractOperation constructor.
      * @param int $scale
      */
-    public function __construct(int $scale = 2) {
+    public function __construct(int $scale = 2)
+    {
         $this->scale = $scale;
     }
 
