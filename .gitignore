@@ -1,0 +1,9 @@
+# PHPStorm and WebStorm
+.idea
+
+# vagrant files
+.vagrant/
+
+# composer vendor
+vendor
+composer.lock
