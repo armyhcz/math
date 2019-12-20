@@ -9,6 +9,12 @@
 namespace China\Math\Expression;
 
 
+use China\Math\Calculation\Adapter\AddOperation;
+use China\Math\Calculation\Adapter\DivOperation;
+use China\Math\Calculation\Adapter\ModOperation;
+use China\Math\Calculation\Adapter\MulOperation;
+use China\Math\Calculation\Adapter\SquareOperation;
+use China\Math\Calculation\Adapter\SubOperation;
 use China\Math\Calculation\OperationException;
 use China\Math\Expression\Calculator\Pattern;
 use China\Math\Expression\Calculator\Symbol;
@@ -42,7 +48,7 @@ class Calculator
         if (!$symbol) {
             $symbol = new Symbol();
         }
-        $this->symbol = $symbol;
+        $this->symbol = self::addSymbol($symbol);
     }
 
     /**
@@ -151,6 +157,22 @@ class Calculator
         }
         $symbol_stack->push($param);
         return array($symbol_stack, $result_stack);
+    }
+
+    /**
+     * @param Symbol $symbol
+     * @return Symbol
+     */
+    private static function addSymbol(Symbol $symbol): Symbol {
+        $symbol->addSymbol((new Injection('+'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_10, AddOperation::class));
+        $symbol->addSymbol((new Injection('-'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_10, SubOperation::class));
+        $symbol->addSymbol((new Injection('*'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_20, MulOperation::class));
+        $symbol->addSymbol((new Injection('/'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_20, DivOperation::class));
+        $symbol->addSymbol((new Injection('('))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_100));
+        $symbol->addSymbol((new Injection(')'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_100));
+        $symbol->addSymbol((new Injection('%'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_20, ModOperation::class));
+        $symbol->addSymbol((new Injection('^'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_500, SquareOperation::class));
+        return $symbol;
     }
 
 }

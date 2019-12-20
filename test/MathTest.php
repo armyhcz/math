@@ -12,6 +12,8 @@ namespace China\Test;
 use China\Math\Calculation\AbstractOperation;
 use China\Math\Calculation\OperationException;
 use China\Math\Expression\Calculator;
+use China\Math\Expression\Calculator\Symbol;
+use China\Math\Expression\Injection;
 use China\Math\Number\Formatter;
 use PHPUnit\Framework\TestCase;
 
@@ -24,12 +26,23 @@ final class MathTest extends TestCase
 {
 
     /**
+     * MathTest constructor.
+     * @param null $name
+     * @param array $data
+     * @param string $dataName
+     */
+    public function __construct($name = null, array $data = [], $dataName = '') {
+        parent::__construct($name, $data, $dataName);
+    }
+
+    /**
      * 自己添加方法
      */
     final public function testAdd()
     {
-        $symbol = (new Calculator\Symbol())->setSymbol('&')
-            ->setWeight('&', 2)->setOperation('&', AndOperation::class);
+        $symbol = new Symbol();
+        $injection = (new Injection('&'))->bindOperation(Symbol::MATH_SYMBOL_WEIGHT_1, AndOperation::class);
+        $symbol->addSymbol($injection);
         try {
             $stack = (new Calculator($symbol))->pattern('(a+b+c)*d-f*m&o');
             $result = $stack->calc(array(

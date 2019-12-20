@@ -9,12 +9,7 @@
 namespace China\Math\Expression\Calculator;
 
 
-use China\Math\Calculation\Adapter\AddOperation;
-use China\Math\Calculation\Adapter\DivOperation;
-use China\Math\Calculation\Adapter\ModOperation;
-use China\Math\Calculation\Adapter\MulOperation;
-use China\Math\Calculation\Adapter\SquareOperation;
-use China\Math\Calculation\Adapter\SubOperation;
+use China\Math\Expression\Injection;
 
 
 /**
@@ -27,7 +22,7 @@ class Symbol
     /**
      * @var array
      */
-    private $add_operation = array();
+    private $operation = array();
 
     /**
      * @var array
@@ -40,45 +35,11 @@ class Symbol
     private $symbol = array();
 
     /**
-     * @param string $symbol
-     * @param string $operation
-     * @return Symbol
+     * @return array
      */
-    public function setOperation(string $symbol, string $operation): self
+    public function __invoke()
     {
-        $this->add_operation = array(
-            $symbol => $operation
-        );
-        return $this;
-    }
-
-    /**
-     * @param string|null $symbol
-     * @param int $scale
-     * @return mixed
-     */
-    public function getOperation(?string $symbol = null, int $scale = 2)
-    {
-        $operation = array_merge(self::MATH_OPERATION, $this->add_operation);
-        if ($symbol) {
-            if (isset($operation[$symbol])) {
-                return new $operation[$symbol]($scale);
-            }
-        }
-        return $operation;
-    }
-
-    /**
-     * @param string $symbol
-     * @param int $weight
-     * @return Symbol
-     */
-    public function setWeight(string $symbol, int $weight): self
-    {
-        $this->weight = array_merge($this->weight, array(
-            $symbol => $weight
-        ));
-        return $this;
+        return $this->operation;
     }
 
     /**
@@ -86,19 +47,7 @@ class Symbol
      */
     public function getWeight(): array
     {
-        return array_merge(self::MATH_SYMBOL_WEIGHT, $this->weight);
-    }
-
-    /**
-     * @param string $symbol
-     * @return Symbol
-     */
-    public function setSymbol(string $symbol): self
-    {
-        $this->symbol = array_merge($this->symbol, array(
-            $symbol
-        ));
-        return $this;
+        return $this->weight;
     }
 
     /**
@@ -106,40 +55,62 @@ class Symbol
      */
     public function getSymbol(): array
     {
-        return array_merge(self::MATH_SYMBOL, $this->symbol);
+        return $this->symbol;
     }
 
     /**
-     * @var array 运算符
+     * @param string|null $symbol
+     * @param int $scale
+     * @return mixed
      */
-    private const MATH_SYMBOL = array(
-        '+', '-', '*', '/', '(', ')', '%', '^'
-    );
+    public function getOperation(string $symbol, int $scale = 2)
+    {
+        if (isset($this->operation[$symbol])) {
+            return new $this->operation[$symbol]($scale);
+        }
+        return null;
+    }
 
     /**
-     * @var array 权重比较
+     * @param Injection $injection
+     * @return Symbol
      */
-    private const MATH_SYMBOL_WEIGHT = array(
-        '+' => 10,
-        '-' => 10,
-        '*' => 20,
-        '/' => 20,
-        '%' => 20,
-        '^' => 500,
-        '(' => 100,
-        ')' => 100,
-    );
+    public function addSymbol(Injection $injection): self {
+        list($weight, $operation) = $injection->getBindData();
+        $this->symbol = array_merge($this->symbol, array($injection->getSymbol()));
+        $this->operation = array_merge($this->operation, $operation);
+        $this->weight = array_merge($this->weight, $weight);
+        return $this;
+    }
 
     /**
-     * @var array 对应操作
+     * @var int
      */
-    private const MATH_OPERATION = array(
-        '+' => AddOperation::class,
-        '-' => SubOperation::class,
-        '*' => MulOperation::class,
-        '/' => DivOperation::class,
-        '%' => ModOperation::class,
-        '^' => SquareOperation::class,
-    );
+    public const MATH_SYMBOL_WEIGHT_1 = 1;
+
+    /**
+     * @var int
+     */
+    public const MATH_SYMBOL_WEIGHT_10 = 10;
+
+    /**
+     * @var int
+     */
+    public const MATH_SYMBOL_WEIGHT_20 = 20;
+
+    /**
+     * @var int
+     */
+    public const MATH_SYMBOL_WEIGHT_50 = 50;
+
+    /**
+     * @var int
+     */
+    public const MATH_SYMBOL_WEIGHT_100 = 100;
+
+    /**
+     * @var int
+     */
+    public const MATH_SYMBOL_WEIGHT_500 = 500;
 
 }
